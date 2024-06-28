@@ -6,7 +6,7 @@ cv2.namedWindow('frame')
 
 baud_rate = 38400
 # COMX en Windows, /dev/tty.IRB-G04 en Linux/Mac
-port = "/dev/tty.IRB-G04"
+port = "/dev/cu.IRB-G04"
 
 def send(ser, msg):
 	ser.write(msg.encode())
@@ -21,16 +21,16 @@ def main():
 		print("Port not available")
 		return
 	
-	time.sleep(2)
+	time.sleep(5)
 
 	while(True):
 		send(ser, "A100;")
-		time.sleep(1)
+		time.sleep(5)
 		send(ser, "A0;")
-		time.sleep(1)
+		time.sleep(5)
 		
-		# Exit with ESC
-		if cv2.waitKey(10) & 0xFF == 27:
-			break
 	
 	ser.close()
+
+if __name__ == "__main__":
+	main()
