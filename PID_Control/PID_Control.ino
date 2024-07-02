@@ -216,8 +216,7 @@ void loop() {
       int iSeparador = instruccion.indexOf('D');
       angle = (instruccion.substring(1, iSeparador)).toFloat();
       dist = (instruccion.substring(iSeparador + 1)).toFloat();
-      Serial.println(angle);
-      Serial.println(dist);
+      Serial.println(instruccion);
     }
     // Voltaje aplicado a motores (modificar aquí para implementar control)}
     setpointa = 0; 
@@ -253,13 +252,13 @@ void loop() {
     md.setM1Speed(voltage_m0*400.0/12.0);
     md.setM2Speed(voltage_m1*400.0/12.0);
 
-    // Serial.print(vel0);
-    // Serial.print(",");
-    // Serial.print(vel1);
-    // Serial.print(",");
-    // Serial.print(voltage_m0);
-    // Serial.print(",");
-    // Serial.println(voltage_m1);
+    Serial.print(vel0);
+    Serial.print(",");
+    Serial.print(vel1);
+    Serial.print(",");
+    Serial.print(voltage_m0);
+    Serial.print(",");
+    Serial.println(voltage_m1);
     
 
     time_ant = newtime;
