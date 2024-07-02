@@ -22,12 +22,12 @@ class DosRuedasAutoController:
         voltage_right = distance_control + angle_control
         
         # Limitar voltaje +-7
-        voltage_left = max(min(voltage_left, 7), -7)
-        voltage_right = max(min(voltage_right, 7), -7)
+        voltage_left = max(min(voltage_left, 6), -6)
+        voltage_right = max(min(voltage_right, 6), -6)
         
         return voltage_left, voltage_right
 
-def simular_movimiento(target_angle, target_distance, current_angle, current_distance, Kp_angle, Ki_angle, Kd_angle, Kp_distance, Ki_distance, Kd_distance, total_time=40, dt=0.1):
+def simular_movimiento(target_angle, target_distance, current_angle, current_distance, Kp_angle, Ki_angle, Kd_angle, Kp_distance, Ki_distance, Kd_distance, total_time=15, dt=0.1):
     # Crear el controlador
     car_controller = DosRuedasAutoController(Kp_angle, Ki_angle, Kd_angle, Kp_distance, Ki_distance, Kd_distance)
 
@@ -88,12 +88,12 @@ def simular_movimiento(target_angle, target_distance, current_angle, current_dis
     plt.show()
 
 # Ejemplo de uso
-target_angle = 90  # angulo en grados
+target_angle = 45  # angulo en grados
 target_distance = 5  # avance en metros
 current_angle = 0  # angulo actual en grados
 current_distance = 0  # distancia actual en metro
 
-Kp_angle, Ki_angle, Kd_angle = 1.0, 0.1, 0.05
-Kp_distance, Ki_distance, Kd_distance = 1.0, 0.1, 0.05
+Kp_angle, Ki_angle, Kd_angle = 1, 0.01, 0.01
+Kp_distance, Ki_distance, Kd_distance = 5, 0.05, 0.05
 
 simular_movimiento(target_angle, target_distance, current_angle, current_distance, Kp_angle, Ki_angle, Kd_angle, Kp_distance, Ki_distance, Kd_distance)
