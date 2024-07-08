@@ -55,8 +55,8 @@ class DosRuedasAutoController:
         voltage_right = distance_control - angle_control
 
         # Limitar voltaje +-7
-        voltage_left = max(min(voltage_left, 5), -5)
-        voltage_right = max(min(voltage_right, 5), -5)
+        voltage_left = max(min(voltage_left, 3), -3)
+        voltage_right = max(min(voltage_right, 3), -3)
 
         return voltage_left, voltage_right
     
@@ -142,7 +142,7 @@ KI = 0.01
 KD = 0.05
 
 KPA = 0.02
-KIA = 0.0005
+KIA = 0.005
 KDA = 0.05
 #endregion
 
@@ -229,6 +229,7 @@ while(True):
 
    #Se repite el proceso, ahora para encontar los arcos
     txt_arcos = ["verde"]
+    txt_arcos = ["verde"]
 
     #Lineas verdes
     low_green = np.array([40, 100, 100])
@@ -277,9 +278,11 @@ while(True):
     dist0 = round(dist0,3) if angle0 < 10 and angle0 > -10 else 0
 
     #Ver si estamos cerca, si estamos cerca, parar el robot
-    margen_parar_distancia = 2
+    margen_parar_distancia = 6
     
-    if dist0 > margen_parar_distancia:
+    print(f"Distancia: {dist}")
+    if dist < margen_parar_distancia and dist != 0:
+        print("Parar")
         sys.exit(0)
         
     
@@ -292,7 +295,7 @@ while(True):
     msg = str.encode(f"L{vleft}R{vright}")
 
     ser.write(msg)
-    #print(msg)
+    print(msg)
     time.sleep(0.3)
 
     cv2.putText(img, f"Angulo: {angle0}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
