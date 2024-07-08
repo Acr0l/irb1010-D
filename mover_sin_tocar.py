@@ -64,8 +64,8 @@ class DosRuedasAutoController:
         voltage_right = distance_control - angle_control
 
         # Limitar voltaje +-7
-        voltage_left = max(min(voltage_left, 5), -5)
-        voltage_right = max(min(voltage_right, 5), -5)
+        voltage_left = max(min(voltage_left, 3), -3)
+        voltage_right = max(min(voltage_right, 3), -3)
 
         return voltage_left, voltage_right
     
@@ -139,12 +139,12 @@ def angle(p1, p2):
 def rad_to_deg(rad):
     return rad * 180 / math.pi # En caso de que no se pueda ocupar math, por favor considerar aproximación a 3.141592653589793
 
-KP = 0.03
-KI = 0.01
-KD = 0.05
+KP = 0.02
+KI = 0.001
+KD = 0.5
 
 KPA = 0.02
-KIA = 0.0005
+KIA = 0.005
 KDA = 0.05
 
 controlador_robot = DosRuedasAutoController(KPA, KIA, 0, KP, 0.0, 0.0)
@@ -225,7 +225,7 @@ while(True):
             print("blue failed")
 
    #Se repite el proceso, ahora para encontar los arcos
-    txt_arcos = ["M","verde"]
+    txt_arcos = ["verde"]
 
     #Lineas verdes
     low_green = np.array([40, 100, 100])
@@ -254,7 +254,7 @@ while(True):
     
     #Se asigna el centro de cada arco
     try:
-        morado_c, verde_c = centers_arcos
+        verde_c = centers_arcos
     
     except:
         #purple
@@ -267,7 +267,7 @@ while(True):
             morado_c = (0, 0)
             print("morado failed")
         
-        #dark blue
+        #verde
         try:
             if verde_c == None:
                 verde_c = (0, 0)
@@ -291,9 +291,11 @@ while(True):
     dist_real = round(dist_real, 3)
 
     #Ver si estamos cerca, si estamos cerca, parar el robot
-    margen_parar_distancia = 20
+    margen_parar_distancia = 6
     
-    if dist > margen_parar_distancia:
+    print(f"Distancia: {dist}")
+    if dist < margen_parar_distancia and dist != 0:
+        print("Parar")
         sys.exit(0)
         
     
@@ -313,7 +315,7 @@ while(True):
     #print(centers_arcos)
 
     ser.write(msg)
-    #print(msg)
+    print(msg)
     time.sleep(0.3)
 
     cv2.putText(img, f"Angulo: {angle1}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
