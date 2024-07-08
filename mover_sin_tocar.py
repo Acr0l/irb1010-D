@@ -137,16 +137,16 @@ def rad_to_deg(rad):
 #endregion
 
 #region Constantes de los controladores PID
-KP = 0.03
+KP = 0.05
 KI = 0.01
 KD = 0.05
 
-KPA = 0.02
-KIA = 0.005
-KDA = 0.05
+KPA = 0.025
+KIA = 0.
+KDA = 0.
 #endregion
 
-controlador_robot = DosRuedasAutoController(KPA, KIA, 0, KP, 0.0, 0.0)
+controlador_robot = DosRuedasAutoController(KPA, KIA, KDA, KP, 0.0, 0.0)
 
 #region Colores
 txt = ["R", "Y", "B"]
@@ -280,8 +280,8 @@ while(True):
     #Ver si estamos cerca, si estamos cerca, parar el robot
     margen_parar_distancia = 6
     
-    print(f"Distancia: {dist}")
-    if dist < margen_parar_distancia and dist != 0:
+    print(f"Distancia: {dist0}")
+    if dist0 < margen_parar_distancia and dist0 != 0:
         print("Parar")
         sys.exit(0)
         

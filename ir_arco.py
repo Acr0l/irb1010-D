@@ -149,6 +149,8 @@ KDA = 0.05
 
 controlador_robot = DosRuedasAutoController(KPA, KIA, 0, KP, 0.0, 0.0)
 
+freno = False
+
 while(True): 
     # Se obtiene un único frame
     ret, img = vid.read() 
@@ -277,12 +279,6 @@ while(True):
             verde_c = (0, 0)
             print("verde failed")
         
-
-    dist = distance(blue_c, yellow_c) if angle1 < 10 and angle1 > -10 else 0
-    dist = round(dist, 3)
-    dist_real = distance(blue_c, yellow_c)
-    dist_real = round(dist_real, 3)
-
     #obtener info
     pos_arco = [x1a, (y1a+y2a)//2]
 
@@ -297,17 +293,32 @@ while(True):
     angle1 = calculate_turn_angle(current_angle_al_arco, target_angle_al_arco)
 
     if dist_al_arco < 10:
-        pass
-
-
-
-
-
-
-        
+        freno = True
+    
+    if freno == True:
+        rotado = False
+        while rotado == False:
+            #parar el robot y orientar hacia el punto verde del centro
+            ser.write("L0R0;".encode())
+            time.sleep(0.5)
+            current_angle_freno = calculate_angle_between_points((blue_c[0], blue_c[1]), (verde_c[0], verde_c[1]))
+            target_angle_freno = 0
+            angle_freno = calculate_turn_angle(current_angle_freno, target_angle_freno)
+            vleft, vright = controlador_robot.update(0, angle_freno, 0, 0, 0.01)
+            vleft = round(vleft, 3)
+            vright = round(vright, 3)
+            msg = str.encode(f"L{vleft}R{vright}")
+            ser.write(msg)
+            time.sleep(0.5)
+            if angle_freno < 5 and angle_freno > -5:
+                rotado = True
+    
+    if rotado == True:
+        break
     
     #Actualizar PID
-    vleft, vright = controlador_robot.update(0, angle1, 0, dist, 0.01)
+    vleft, vright = controlador_robot.update(0, angle1, 0, dist_al_arco, 0.01)
+
 
     vleft = round(vleft, 3)
     vright = round(vright, 3)
