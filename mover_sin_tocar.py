@@ -55,17 +55,12 @@ class DosRuedasAutoController:
         voltage_right = distance_control - angle_control
 
         # Limitar voltaje +-7
-        voltage_left = max(min(voltage_left, 3), -3)
-        voltage_right = max(min(voltage_right, 3), -3)
+        voltage_left = max(min(voltage_left, 5), -5)
+        voltage_right = max(min(voltage_right, 5), -5)
 
         return voltage_left, voltage_right
     
 #region Funciones de ayuda
-def set_angle_and_dist(red, blue, target):
-    angle = calculate_angle_between_points(red, blue)
-    dist = distance(blue, target)
-    return angle, dist
-
 def calculate_angle_between_points(p1, p2):
     delta_x = p2[0] - p1[0]
     delta_y = p2[1] - p1[1]
@@ -142,7 +137,7 @@ KI = 0.01
 KD = 0.05
 
 KPA = 0.02
-KIA = 0.005
+KIA = 0.0005
 KDA = 0.05
 #endregion
 
@@ -167,11 +162,11 @@ colors = [(low_red_r, high_red_r), (low_yellow, high_yellow), (low_blue_r, high_
 #endregion
 
 while(True): 
-    #region Obtener datos de la cámara
     # Se obtiene un único frame
     ret, img = vid.read() 
     # Se transforma la imagen a HSV
     img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
 
     # Se crean las máscaras
     masks = create_masks(img_hsv, colors)
@@ -184,7 +179,6 @@ while(True):
 
     # Se aplica la máscara a la imagen original
     img_masked = cv2.bitwise_and(img, img, mask=combined)
-    #endregion
 
     # Se obtienen los centros de las bounding boxes (cada color) para trabajar segmentos
     centers = []
@@ -228,8 +222,7 @@ while(True):
             print("blue failed")
 
    #Se repite el proceso, ahora para encontar los arcos
-    txt_arcos = ["verde"]
-    txt_arcos = ["verde"]
+    txt_arcos = ["M","verde"]
 
     #Lineas verdes
     low_green = np.array([40, 100, 100])
@@ -258,9 +251,20 @@ while(True):
     
     #Se asigna el centro de cada arco
     try:
-        verde_c = centers_arcos[0]
+        morado_c, verde_c = centers_arcos
     
     except:
+        #purple
+        try:
+            if morado_c == None:
+                morado_c = (0, 0)
+                print("morado failed")
+        
+        except:
+            morado_c = (0, 0)
+            print("morado failed")
+        
+        #dark blue
         try:
             if verde_c == None:
                 verde_c = (0, 0)
@@ -270,36 +274,47 @@ while(True):
             verde_c = (0, 0)
             print("verde failed")
         
-    target_c = yellow_c
-    angle0, dist0 = set_angle_and_dist(red_c, blue_c, target_c)
-    
-    angle0 = round(angle0, 3)
+    current_angle = calculate_angle_between_points(blue_c, red_c)
+    target_angle = calculate_angle_between_points(blue_c, yellow_c)
 
-    dist0 = round(dist0,3) if angle0 < 10 and angle0 > -10 else 0
+    angle1 = calculate_turn_angle(current_angle, target_angle)
+    angle1 = round(angle1, 3)
+
+    #angle1 = rad_to_deg(angle(blue_c, yellow_c)- angle(blue_c, red_c))
+    #angle1 = round(angle1, 3)
+    dist = distance(blue_c, yellow_c) if angle1 < 10 and angle1 > -10 else 0
+    dist = round(dist, 3)
+    dist_real = distance(blue_c, yellow_c)
+    dist_real = round(dist_real, 3)
 
     #Ver si estamos cerca, si estamos cerca, parar el robot
-    margen_parar_distancia = 6
+    margen_parar_distancia = 20
     
-    print(f"Distancia: {dist}")
-    if dist < margen_parar_distancia and dist != 0:
-        print("Parar")
+    if dist > margen_parar_distancia:
         sys.exit(0)
         
     
     #Actualizar PID
-    vleft, vright = controlador_robot.update(0, angle0, 0, dist0, 0.01)
+    vleft, vright = controlador_robot.update(0, angle1, 0, dist, 0.01)
 
     vleft = round(vleft, 3)
     vright = round(vright, 3)
 
     msg = str.encode(f"L{vleft}R{vright}")
 
+    #msg = str.encode(f"L{4}R{3}")
+
+    #print(f"Ángulo: {angle1}, Distancia: {dist}, Distancia real: {dist_real}")
+
+
+    #print(centers_arcos)
+
     ser.write(msg)
-    print(msg)
+    #print(msg)
     time.sleep(0.3)
 
-    cv2.putText(img, f"Angulo: {angle0}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.putText(img, f"Distancia: {dist0}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(img, f"Angulo: {angle1}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(img, f"Distancia: {dist}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.imshow("o", img)
     
 
