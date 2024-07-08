@@ -1,4 +1,3 @@
-#Chutea la pelota
 # Importamos las librerías necesarias
 import cv2 
 import numpy as np
@@ -6,6 +5,7 @@ import math
 import time 
 import serial
 from simple_pid import PID
+import sys
 
 # Importamos la clase Image de la librería PIL
 from PIL import Image
@@ -290,6 +290,13 @@ while(True):
     dist_real = distance(blue_c, yellow_c)
     dist_real = round(dist_real, 3)
 
+    #Ver si estamos cerca, si estamos cerca, parar el robot
+    margen_parar_distancia = 20
+    
+    if dist > margen_parar_distancia:
+        sys.exit(0)
+        
+    
     #Actualizar PID
     vleft, vright = controlador_robot.update(0, angle1, 0, dist, 0.01)
 
