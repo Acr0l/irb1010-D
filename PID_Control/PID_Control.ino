@@ -59,7 +59,7 @@ float errorR, lastErrorR, cumErrorR, rateErrorR =0;
 float errorL, lastErrorL, cumErrorL, rateErrorL;
 float errorA, lastErrorA, cumErrorA, rateErrorA;
 
-float angle, dist;
+float lvel, rvel;
 
 char msgEnd = ';';
 String instruccion;
@@ -213,25 +213,14 @@ void loop() {
     //-----------------------------------
     if (Serial3.available() > 0) {
       instruccion = readBuff(); //Leer el mensaje entrante
-      int iSeparador = instruccion.indexOf('D');
-      angle = (instruccion.substring(1, iSeparador)).toFloat();
-      dist = (instruccion.substring(iSeparador + 1)).toFloat();
+      int iSeparador = instruccion.indexOf('R');
+      lvel = (instruccion.substring(1, iSeparador)).toFloat();
+      rvel = (instruccion.substring(iSeparador + 1)).toFloat();
       Serial.println(instruccion);
     }
-    // Voltaje aplicado a motores (modificar aquí para implementar control)}
-    setpointa = 0; 
-    outputa = computePIDA(angle);
 
-    inputr = dist + outputa;
-    setpointr = 0; //baseVel + outputa; // Cambiar a VEL + outputa
-    outputr = computePIDR(inputr, setpointr);
-    
-    inputl = -dist + outputa;
-    setpointl = 0; //(baseVel + outputa); // Cambiar a VEL + outputa
-    outputl = computePIDL(inputl, setpointl);
-
-    voltage_m0 = outputl;
-    voltage_m1 = outputr;
+    voltage_m0 = lvel;
+    voltage_m1 = -rvel;
     
     //Seguridad: Establece voltaje máximo para motores
     if (voltage_m0 > 12.0){
@@ -252,13 +241,16 @@ void loop() {
     md.setM1Speed(voltage_m0*400.0/12.0);
     md.setM2Speed(voltage_m1*400.0/12.0);
 
-    Serial.print(vel0);
+    Serial.print(voltage_m0*400.0/12.0);
     Serial.print(",");
-    Serial.print(vel1);
-    Serial.print(",");
-    Serial.print(voltage_m0);
-    Serial.print(",");
-    Serial.println(voltage_m1);
+    Serial.println(voltage_m0*400.0/12.0);
+    // Serial.print(vel0);
+    // Serial.print(",");
+    // Serial.print(vel1);
+    // Serial.print(",");
+    // Serial.print(voltage_m0);
+    // Serial.print(",");
+    // Serial.println(voltage_m1);
     
 
     time_ant = newtime;
