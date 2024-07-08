@@ -247,7 +247,9 @@ while(True):
     x1a, y1a, x2a, y2a = bounding_boxes_arcos[0]
     cv2.circle(img, (x1a, (y1a+y2a)//2), 5, (0, 255, 0), -1)
     cv2.circle(img, (x2a, (y1a+y2a)//2), 5, (0, 255, 0), -1)
-    cv2.circle(img, ((x1a+x2a)//2, (y1a+y2a)//2), 5, (0, 255, 0), -1)
+    #Coordenadas centro
+    coordenadas_centro = ((x1a+x2a)//2, (y1a+y2a)//2)
+    cv2.circle(img, coordenadas_centro, 5, (0, 255, 0), -1)
     for box, t in zip(bounding_boxes_arcos, txt_arcos):
         centers_arcos.append(boundy_box(img_masked, box, img, t))
     
@@ -277,16 +279,16 @@ while(True):
             print("verde failed")
         
     current_angle = calculate_angle_between_points(blue_c, red_c)
-    target_angle = calculate_angle_between_points(blue_c, yellow_c)
+    target_angle = calculate_angle_between_points(blue_c, coordenadas_centro)
 
     angle1 = calculate_turn_angle(current_angle, target_angle)
     angle1 = round(angle1, 3)
 
     #angle1 = rad_to_deg(angle(blue_c, yellow_c)- angle(blue_c, red_c))
     #angle1 = round(angle1, 3)
-    dist = distance(blue_c, yellow_c) if angle1 < 10 and angle1 > -10 else 0
+    dist = distance(blue_c, coordenadas_centro) if angle1 < 10 and angle1 > -10 else 0
     dist = round(dist, 3)
-    dist_real = distance(blue_c, yellow_c)
+    dist_real = distance(blue_c, coordenadas_centro)
     dist_real = round(dist_real, 3)
 
     #Actualizar PID
