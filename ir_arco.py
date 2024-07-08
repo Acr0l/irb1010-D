@@ -277,26 +277,33 @@ while(True):
             verde_c = (0, 0)
             print("verde failed")
         
-    current_angle = calculate_angle_between_points(blue_c, red_c)
-    target_angle = calculate_angle_between_points(blue_c, yellow_c)
 
-    angle1 = calculate_turn_angle(current_angle, target_angle)
-    angle1 = round(angle1, 3)
-
-    #angle1 = rad_to_deg(angle(blue_c, yellow_c)- angle(blue_c, red_c))
-    #angle1 = round(angle1, 3)
     dist = distance(blue_c, yellow_c) if angle1 < 10 and angle1 > -10 else 0
     dist = round(dist, 3)
     dist_real = distance(blue_c, yellow_c)
     dist_real = round(dist_real, 3)
 
-    #Ver si estamos cerca, si estamos cerca, parar el robot
-    margen_parar_distancia = 6
-    
-    print(f"Distancia: {dist}")
-    if dist < margen_parar_distancia and dist != 0:
-        print("Parar")
-        sys.exit(0)
+    #obtener info
+    pos_arco = [x1a, (y1a+y2a)//2]
+
+    dist_al_arco = distance((x1a, (y1a+y2a)//2), (blue_c[0], blue_c[1]))
+
+    dist_al_arco = round(dist_al_arco, 3)
+
+    current_angle_al_arco = calculate_angle_between_points((x1a, (y1a+y2a)//2), (blue_c[0], blue_c[1]))
+
+    target_angle_al_arco = 0
+
+    angle1 = calculate_turn_angle(current_angle_al_arco, target_angle_al_arco)
+
+    if dist_al_arco < 10:
+        pass
+
+
+
+
+
+
         
     
     #Actualizar PID
