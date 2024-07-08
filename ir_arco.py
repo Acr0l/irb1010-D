@@ -337,7 +337,7 @@ while(True):
     time.sleep(0.3)
 
     cv2.putText(img, f"Angulo: {angle1}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.putText(img, f"Distancia: {dist}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(img, f"Distancia: {dist_al_arco}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.imshow("o", img)
     
 
