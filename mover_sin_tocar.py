@@ -39,6 +39,7 @@ msgOnEncode = str.encode(msgOn)
 
 # seria.Serial nos permite abrir el puerto COM deseado
 #/dev/tty.IRB-G04
+#ser = serial.Serial("/dev/tty.IRB-G04",baudrate = 38400,timeout = 1)
 ser = serial.Serial("/dev/tty.IRB-G04",baudrate = 38400,timeout = 1)
 
 # Cuando se abre el puerto serial con el Arduino, este siempre se reinicia por lo que hay que esperar a que inicie para enviar los mensajes
@@ -231,10 +232,10 @@ while(True):
     txt_arcos = ["M","verde"]
 
     #Lineas verdes
-    #low_green = np.array([40, 100, 100])
-    #high_green = np.array([80, 255, 255])
-    low_green = np.array([35, 100, 100])
-    high_green = np.array([90, 255, 255])
+    low_green = np.array([40, 100, 100])
+    high_green = np.array([80, 255, 255])
+    #low_green = np.array([35, 100, 100])
+    #high_green = np.array([90, 255, 255])
 
     # Lista de colores arcos
     colors_arcos = [(low_green, high_green)]
