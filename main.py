@@ -11,8 +11,8 @@ from simple_pid import PID
 from PIL import Image
 
 # Abre la cámara
-#vid = cv2.VideoCapture(0, cv2.CAP_DSHOW) 
-vid = cv2.VideoCapture(0) 
+vid = cv2.VideoCapture(0, cv2.CAP_DSHOW) 
+#vid = cv2.VideoCapture(0) 
 
 #Iniciar segunda imagen 
 #im2 = cv2.imread("black.jpg")
@@ -38,7 +38,8 @@ msgOnEncode = str.encode(msgOn)
 
 # seria.Serial nos permite abrir el puerto COM deseado
 #/dev/tty.IRB-G04
-ser = serial.Serial("/dev/tty.IRB-G04",baudrate = 38400,timeout = 1)
+#ser = serial.Serial("/dev/tty.IRB-G04",baudrate = 38400,timeout = 1)
+ser = serial.Serial("COM5",baudrate = 38400,timeout = 1)
 
 # Cuando se abre el puerto serial con el Arduino, este siempre se reinicia por lo que hay que esperar a que inicie para enviar los mensajes
 time.sleep(1)
