@@ -11,7 +11,8 @@ from simple_pid import PID
 from PIL import Image
 
 # Abre la cámara
-vid = cv2.VideoCapture(1, cv2.CAP_DSHOW) 
+#vid = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+vid = cv2.VideoCapture(0)
 
 #Iniciar segunda imagen 
 #im2 = cv2.imread("black.jpg")
@@ -37,7 +38,8 @@ msgOnEncode = str.encode(msgOn)
 
 # seria.Serial nos permite abrir el puerto COM deseado
 #/dev/tty.IRB-G04
-ser = serial.Serial("COM5",baudrate = 38400,timeout = 1)
+#ser = serial.Serial("COM5",baudrate = 38400,timeout = 1)
+ser = serial.Serial("/dev/tty.IRB-G04",baudrate = 38400,timeout = 1)
 
 # Cuando se abre el puerto serial con el Arduino, este siempre se reinicia por lo que hay que esperar a que inicie para enviar los mensajes
 time.sleep(1)
@@ -64,8 +66,8 @@ class DosRuedasAutoController:
         voltage_right = distance_control - angle_control
 
         # Limitar voltaje +-7
-        voltage_left = max(min(voltage_left, 5), -5)
-        voltage_right = max(min(voltage_right, 5), -5)
+        voltage_left = max(min(voltage_left, 6), -6)
+        voltage_right = max(min(voltage_right, 6), -6)
 
         return voltage_left, voltage_right
     
@@ -147,6 +149,7 @@ KPA = 0.02
 KIA = 0.0005
 KDA = 0.05
 
+#controlador_robot = DosRuedasAutoController(KPA, KIA, KDA, KP, KI, KD)
 controlador_robot = DosRuedasAutoController(KPA, KIA, 0, KP, 0.0, 0.0)
 
 while(True): 
@@ -287,10 +290,14 @@ while(True):
     #angle1 = round(angle1, 3)
     dist = distance(blue_c, yellow_c) if angle1 < 10 and angle1 > -10 else 0
     dist = round(dist, 3)
+    print("dist: " , dist)
     #dist_real = distance(blue_c, yellow_c)
     #Distancia 0 para que no se desplace, se mueve con el ajuste del ángulo no más
-    dist_real = distance(0, 0)
+    #dist_real = distance(0, 0)
     #dist_real = round(dist_real, 3)
+    dist_real = distance(blue_c, yellow_c)
+    dist_real = round(dist_real, 3)
+    print(dist_real)
 
     #Actualizar PID
     vleft, vright = controlador_robot.update(0, angle1, 0, dist, 0.01)
@@ -312,7 +319,8 @@ while(True):
     time.sleep(0.3)
 
     cv2.putText(img, f"Angulo: {angle1}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
-    cv2.putText(img, f"Distancia: {dist}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(img, f"Distancia Angulo: {dist}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(img, f"Distancia Lineal: {dist_real}", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
     cv2.imshow("o", img)
     
 

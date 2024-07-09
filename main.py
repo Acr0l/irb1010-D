@@ -148,7 +148,7 @@ KPA = 0.02
 KIA = 0.0005
 KDA = 0.05
 
-controlador_robot = DosRuedasAutoController(KPA, KIA, 0, KP, 0.0, 0.0)
+controlador_robot = DosRuedasAutoController(KPA, KIA, KDA, KP, KI, KD)
 
 while(True): 
     # Se obtiene un único frame
@@ -294,6 +294,7 @@ while(True):
 
     #Actualizar PID
     vleft, vright = controlador_robot.update(0, angle1, 0, dist, 0.01)
+    print(vleft, vright)
 
     vleft = round(vleft, 3)
     vright = round(vright, 3)

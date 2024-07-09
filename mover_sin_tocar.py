@@ -1,3 +1,4 @@
+#Chutea la pelota
 # Importamos las librerías necesarias
 import cv2 
 import numpy as np
@@ -11,24 +12,34 @@ import sys
 from PIL import Image
 
 # Abre la cámara
-vid = cv2.VideoCapture(1, cv2.CAP_DSHOW) 
+#vid = cv2.VideoCapture(0, cv2.CAP_DSHOW) 
+vid = cv2.VideoCapture(0) 
 
-# Obtener los fps del video
+#Iniciar segunda imagen 
+#im2 = cv2.imread("black.jpg")
+
+#Es importante mencionar que el video debe estar en el mismo directorio que el script, de lo contrario, no funcionará
+
+#obtener los fps del video
 fps = vid.get(cv2.CAP_PROP_FPS)
 
 #A partir de los fps, obtener el waikey correcto
 if fps == 0:
     waitkey = 1
+
 else:
     waitkey = int(1000/fps)
 
 
 msgOn = ";" # Distancia
+#msgOff = "A0;" # Ángulo
+# El Ambos mensajes que estan en formato Sring deben ser transformados en un arreglo de bytes mediante la funcion .encode
 msgOnEncode = str.encode(msgOn) 
+#msgOffEncode = str.encode(msgOff)
 
 # seria.Serial nos permite abrir el puerto COM deseado
 #/dev/tty.IRB-G04
-ser = serial.Serial("COM5",baudrate = 38400,timeout = 1)
+ser = serial.Serial("/dev/tty.IRB-G04",baudrate = 38400,timeout = 1)
 
 # Cuando se abre el puerto serial con el Arduino, este siempre se reinicia por lo que hay que esperar a que inicie para enviar los mensajes
 time.sleep(1)
@@ -60,7 +71,6 @@ class DosRuedasAutoController:
 
         return voltage_left, voltage_right
     
-#region Funciones de ayuda
 def calculate_angle_between_points(p1, p2):
     delta_x = p2[0] - p1[0]
     delta_y = p2[1] - p1[1]
@@ -74,6 +84,7 @@ def calculate_turn_angle(current_angle, target_angle):
     while turn_angle < -180:
         turn_angle += 360
     return turn_angle
+
 
 # Función que itera por cada lista de colores entregada, returnando máscaras.
 def create_masks(img, colors):
@@ -129,44 +140,39 @@ def angle(p1, p2):
 
 def rad_to_deg(rad):
     return rad * 180 / math.pi # En caso de que no se pueda ocupar math, por favor considerar aproximación a 3.141592653589793
-#endregion
 
-#region Constantes de los controladores PID
-KP = 0.05
+KP = 0.03
 KI = 0.01
 KD = 0.05
 
 KPA = 0.02
 KIA = 0.0005
 KDA = 0.05
-#endregion
 
-controlador_robot = DosRuedasAutoController(KPA, KIA, KDA, KP, 0.0, 0.0)
-
-#region Colores
-txt = ["R", "Y", "B"]
-# Color trasero del robot
-low_blue_r = np.array([100, 120, 120])
-high_blue_r = np.array([110, 255, 255])
-
-# Color frontal del robot
-low_red_r = np.array([170, 140, 140])
-high_red_r = np.array([180, 255, 255])
-
-# Color de la pelota
-low_yellow = np.array([20, 135, 135])
-high_yellow = np.array([40, 255, 255])
-
-# Lista de colores
-colors = [(low_red_r, high_red_r), (low_yellow, high_yellow), (low_blue_r, high_blue_r)]
-#endregion
+controlador_robot = DosRuedasAutoController(KPA, KIA, 0, KP, 0, 0.0)
 
 while(True): 
     # Se obtiene un único frame
     ret, img = vid.read() 
     # Se transforma la imagen a HSV
+    #img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
+    txt = ["R", "Y", "B"]
+    # Color trasero del robot
+    low_blue_r = np.array([100, 120, 120])
+    high_blue_r = np.array([110, 255, 255])
+
+    # Color frontal del robot
+    low_red_r = np.array([170, 140, 140])
+    high_red_r = np.array([180, 255, 255])
+
+    # Color de la pelota
+    low_yellow = np.array([20, 135, 135])
+    high_yellow = np.array([40, 255, 255])
+
+    # Lista de colores
+    colors = [(low_red_r, high_red_r), (low_yellow, high_yellow), (low_blue_r, high_blue_r)]
 
     # Se crean las máscaras
     masks = create_masks(img_hsv, colors)
@@ -225,8 +231,10 @@ while(True):
     txt_arcos = ["M","verde"]
 
     #Lineas verdes
-    low_green = np.array([40, 100, 100])
-    high_green = np.array([80, 255, 255])
+    #low_green = np.array([40, 100, 100])
+    #high_green = np.array([80, 255, 255])
+    low_green = np.array([35, 100, 100])
+    high_green = np.array([90, 255, 255])
 
     # Lista de colores arcos
     colors_arcos = [(low_green, high_green)]
@@ -243,6 +251,7 @@ while(True):
     # Se obtienen los centros de las bounding boxes (cada arco) para trabajar segmentos
     centers_arcos = []
     x1a, y1a, x2a, y2a = bounding_boxes_arcos[0]
+    #Harcodear?
     cv2.circle(img, (x1a, (y1a+y2a)//2), 5, (0, 255, 0), -1)
     cv2.circle(img, (x2a, (y1a+y2a)//2), 5, (0, 255, 0), -1)
     cv2.circle(img, ((x1a+x2a)//2, (y1a+y2a)//2), 5, (0, 255, 0), -1)
