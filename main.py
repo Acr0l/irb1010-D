@@ -148,7 +148,7 @@ KPA = 0.02
 KIA = 0.0005
 KDA = 0.05
 
-controlador_robot = DosRuedasAutoController(KPA, KIA, KDA, KP, KI, KD)
+controlador_robot = DosRuedasAutoController(KPA, KIA, 0, KP, 0, 0)
 
 while(True): 
     # Se obtiene un único frame
