@@ -11,7 +11,7 @@ from simple_pid import PID
 from PIL import Image
 
 # Abre la cámara
-vid = cv2.VideoCapture(0, cv2.CAP_DSHOW) 
+vid = cv2.VideoCapture(1, cv2.CAP_DSHOW) 
 #vid = cv2.VideoCapture(0) 
 
 #Iniciar segunda imagen 

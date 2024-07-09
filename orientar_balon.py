@@ -11,8 +11,8 @@ from simple_pid import PID
 from PIL import Image
 
 # Abre la cámara
-#vid = cv2.VideoCapture(1, cv2.CAP_DSHOW)
-vid = cv2.VideoCapture(0)
+vid = cv2.VideoCapture(1, cv2.CAP_DSHOW)
+#vid = cv2.VideoCapture(0)
 
 #Iniciar segunda imagen 
 #im2 = cv2.imread("black.jpg")
@@ -38,8 +38,8 @@ msgOnEncode = str.encode(msgOn)
 
 # seria.Serial nos permite abrir el puerto COM deseado
 #/dev/tty.IRB-G04
-#ser = serial.Serial("COM5",baudrate = 38400,timeout = 1)
-ser = serial.Serial("/dev/tty.IRB-G04",baudrate = 38400,timeout = 1)
+ser = serial.Serial("COM5",baudrate = 38400,timeout = 1)
+#ser = serial.Serial("/dev/tty.IRB-G04",baudrate = 38400,timeout = 1)
 
 # Cuando se abre el puerto serial con el Arduino, este siempre se reinicia por lo que hay que esperar a que inicie para enviar los mensajes
 time.sleep(1)
@@ -145,12 +145,12 @@ KP = 0.03
 KI = 0.01
 KD = 0.05
 
-KPA = 0.02
-KIA = 0.0005
-KDA = 0.05
+KPA = 0.05
+KIA = 0.
+KDA = 0.
 
 #controlador_robot = DosRuedasAutoController(KPA, KIA, KDA, KP, KI, KD)
-controlador_robot = DosRuedasAutoController(KPA, KIA, 0, KP, 0.0, 0.0)
+controlador_robot = DosRuedasAutoController(KPA, KIA, KDA, KP, 0.0, 0.0)
 
 while(True): 
     # Se obtiene un único frame
@@ -298,6 +298,7 @@ while(True):
     dist_real = distance(blue_c, yellow_c)
     dist_real = round(dist_real, 3)
     print(dist_real)
+    dist_real = 0
 
     #Actualizar PID
     vleft, vright = controlador_robot.update(0, angle1, 0, dist, 0.01)

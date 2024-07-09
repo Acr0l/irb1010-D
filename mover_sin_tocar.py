@@ -12,8 +12,8 @@ import sys
 from PIL import Image
 
 # Abre la cámara
-#vid = cv2.VideoCapture(0, cv2.CAP_DSHOW) 
-vid = cv2.VideoCapture(0) 
+vid = cv2.VideoCapture(1, cv2.CAP_DSHOW) 
+#vid = cv2.VideoCapture(0) 
 
 #Iniciar segunda imagen 
 #im2 = cv2.imread("black.jpg")
@@ -40,7 +40,7 @@ msgOnEncode = str.encode(msgOn)
 # seria.Serial nos permite abrir el puerto COM deseado
 #/dev/tty.IRB-G04
 #ser = serial.Serial("/dev/tty.IRB-G04",baudrate = 38400,timeout = 1)
-ser = serial.Serial("/dev/tty.IRB-G04",baudrate = 38400,timeout = 1)
+ser = serial.Serial("COM5",baudrate = 38400,timeout = 1)
 
 # Cuando se abre el puerto serial con el Arduino, este siempre se reinicia por lo que hay que esperar a que inicie para enviar los mensajes
 time.sleep(1)
@@ -142,15 +142,15 @@ def angle(p1, p2):
 def rad_to_deg(rad):
     return rad * 180 / math.pi # En caso de que no se pueda ocupar math, por favor considerar aproximación a 3.141592653589793
 
-KP = 0.03
-KI = 0.01
-KD = 0.05
+KP = 0.5
+KI = 0.04
+KD = 0.0005
 
-KPA = 0.02
+KPA = 0.1
 KIA = 0.0005
 KDA = 0.05
 
-controlador_robot = DosRuedasAutoController(KPA, KIA, 0, KP, 0, 0.0)
+controlador_robot = DosRuedasAutoController(KPA, KIA, 0, KP, KI, KD)
 
 while(True): 
     # Se obtiene un único frame
@@ -298,9 +298,9 @@ while(True):
     dist_real = round(dist_real, 3)
 
     #Ver si estamos cerca, si estamos cerca, parar el robot
-    margen_parar_distancia = 20
+    margen_parar_distancia = 100
     
-    if dist > margen_parar_distancia:
+    if dist < margen_parar_distancia:
         sys.exit(0)
         
     
