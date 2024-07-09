@@ -302,6 +302,11 @@ while(True):
     angle1 = calculate_turn_angle(current_angle, target_angle)
     angle1 = round(angle1, 3)
     
+    if angle1 < 10 and angle1 > -10 and en_posicion:
+        ser.write("L6R6".encode())
+        time.sleep(0.3)
+        ser.write("L0R0".encode())
+        break
     dist = round(distance(blue_c, target),3) if angle1 < 10 and angle1 > -10 else 0
     
     #Actualizar PID
@@ -311,6 +316,13 @@ while(True):
     vright = round(vright, 3)
 
     msg = str.encode(f"L{vleft}R{vright}")
+
+    #msg = str.encode(f"L{4}R{3}")
+
+    #print(f"Ángulo: {angle1}, Distancia: {dist}, Distancia real: {dist_real}")
+
+
+    #print(centers_arcos)
 
     ser.write(msg)
     #print(msg)
